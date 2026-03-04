@@ -3,7 +3,11 @@ import cv2
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import torch.nn as nn
 from tinysam import sam_model_registry, SamPredictor
+
+if not hasattr(nn.GELU, 'approximate'):
+    nn.GELU.approximate = 'none'
 
 def show_mask(mask, ax, random_color=False):
     if random_color:
@@ -28,7 +32,7 @@ def show_box(box, ax):
 sys.path.append("./tinysam")
 
 cpt_path = "weights/tinysam_w8a8.pth"
-quant_sam = torch.load(cpt_path) 
+quant_sam = torch.load(cpt_path,weights_only=False) 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 quant_sam.to(device=device)                                 
 predictor = SamPredictor(quant_sam)
